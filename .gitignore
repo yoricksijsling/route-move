@@ -1,0 +1,4 @@
+.projectile
+config.py
+persist/strava_refresh_token
+

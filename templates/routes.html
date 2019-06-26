@@ -1,0 +1,25 @@
+<head>
+  <style>
+body {
+font-family: sans-serif;
+font-size: 14px;
+}
+  </style>
+</head>
+<body>
+  {% for route in routes %}
+  <div class="route">
+    <p>
+      <b>{{route.name}}</b>
+      {{'{0:0.1f}'.format(route.distance / 1000)}}km
+      {{'{0:0.0f}'.format(route.elevation_gain)}}m<br />
+      {{route.description}}
+    </p>
+    <form action="/copy" method="post">
+      <input type="hidden" name="route_id" value="{{route.id}}" />
+      <input type="text" name="route_name" />
+      <input type="submit" value="Submit">
+    </form>
+  </div>
+  {% endfor %}
+</body>
