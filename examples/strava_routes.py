@@ -2,7 +2,7 @@ import datetime
 from dateutil.tz import tzutc
 
 
-def example_routes():
+def get():
     return [
         {
             'athlete': {

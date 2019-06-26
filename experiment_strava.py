@@ -1,14 +1,14 @@
 import time
 import swagger_client
-from strava.swagger_client.rest import ApiException
+from swagger_client.rest import ApiException
 from pprint import pprint
 
 import config
 import strava.tokens
 
-api_client = strava.swagger_client.ApiClient()
+api_client = swagger_client.ApiClient()
 api_client.configuration.access_token = strava.tokens.request_access_token()
-routes_api = strava.swagger_client.RoutesApi(api_client = api_client)
+routes_api = swagger_client.RoutesApi(api_client = api_client)
 
 # def get_routes():
 #     routes_api
@@ -19,7 +19,7 @@ try:
     # pprint(api_response)
     # print(len(api_response))
 
-    route_id=19704198
+    route_id=19295497
     api_response = api_client.call_api(
         f'/routes/{route_id}/export_tcx', 'GET',
         {}, [], {},
