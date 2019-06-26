@@ -1,8 +1,14 @@
 import datetime
 from dateutil.tz import tzutc
 
+from swagger_client.models.route import Route
+
 
 def get():
+    return list(Route(**o) for o in get_objects())
+
+
+def get_objects():
     return [
         {
             'athlete': {

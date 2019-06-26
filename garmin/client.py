@@ -159,10 +159,10 @@ class GarminClient(object):
         return response
 
     @require_session
-    def post_elevation(self, geopoints):
+    def post_elevation(self, elevation_tuples):
         response = self.session.post(
             'https://connect.garmin.com/modern/proxy/course-service/course/elevation',
-            json=geopoints,
+            json=elevation_tuples,
             headers={'nk': 'NT'},
         )
         return response

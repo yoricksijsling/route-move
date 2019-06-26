@@ -13,6 +13,7 @@ setuptools = ">=21.0.0"
 urllib3 = ">=1.15.1"
 requests = "*"
 flask = "*"
+geopy = "*"
 
 [requires]
 python_version = "3.6"
