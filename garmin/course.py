@@ -1,13 +1,13 @@
 import geopy.distance
 
 
-def add_course_info(course, name, elevation_data):
+def add_course_info(course, name, activity_type, elevation_data):
 
     geopoints = elevation_tuples_to_geopoints(elevation_data)
     add_distances_to_geopoints(geopoints)
     elevations = list(p["elevation"] for p in geopoints)
 
-    course["activityTypePk"] = 10
+    course["activityTypePk"] = activity_type  # 1 is running, 10 is cycling
     course["boundingBox"] = calculate_bounding_box(geopoints)
     course["coordinateSystem"] = "WGS84"
     course["courseName"] = name

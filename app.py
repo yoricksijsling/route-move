@@ -2,7 +2,6 @@
 # FLASK_APP=app.py flask run
 
 from flask import Flask, render_template, request
-from pprint import pprint
 
 import config
 import garmin.course
@@ -22,15 +21,13 @@ def routes():
         config.strava_athlete_id, page=1, per_page=200
     )
 
-    # Only cycling routes
-    routes = list(r for r in routes if r.type == 1)
-
     return render_template("routes.html", routes=routes)
 
 
 @app.route("/copy", methods=["POST"])
 def copy():
     route_id = request.form["route_id"]
+    route_type = int(request.form["route_type"])  # Cycling is type 1, running is type 2
     route_name = request.form["route_name"]
 
     # Get tcx from strava
@@ -60,7 +57,11 @@ def copy():
             garmin.course.geopoints_to_elevation_tuples(course["geoPoints"])
         )
         elevation_tuples = elevation_response.json()
-        garmin.course.add_course_info(course, route_name, elevation_tuples)
+
+        garmin_activity_type = {1: 10, 2: 1}.get(route_type, 10)
+        garmin.course.add_course_info(
+            course, route_name, garmin_activity_type, elevation_tuples
+        )
 
         course_response = garmin_client.post_course(course)
         saved_course = course_response.json()
