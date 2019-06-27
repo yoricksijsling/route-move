@@ -1,4 +1,3 @@
-
 import geopy.distance
 
 
@@ -6,44 +5,35 @@ def add_course_info(course, name, elevation_data):
 
     geopoints = elevation_tuples_to_geopoints(elevation_data)
     add_distances_to_geopoints(geopoints)
-    elevations = list(p['elevation'] for p in geopoints)
+    elevations = list(p["elevation"] for p in geopoints)
 
-    course['activityTypePk'] = 10
-    course['boundingBox'] = calculate_bounding_box(geopoints)
-    course['coordinateSystem'] = 'WGS84'
-    course['courseName'] = name
-    course['distanceMeter'] = geopoints[-1]['distance']
-    course['elevationGainMeter'] = calculate_elevation_gain(elevations)
-    course['elevationLossMeter'] = calculate_elevation_loss(elevations)
-    course['geoPoints'] = geopoints
-    course['rulePK'] = 2
-    course['sourceTypeId'] = 3
-    course['startPoint'] = pick_start_point(geopoints)
+    course["activityTypePk"] = 10
+    course["boundingBox"] = calculate_bounding_box(geopoints)
+    course["coordinateSystem"] = "WGS84"
+    course["courseName"] = name
+    course["distanceMeter"] = geopoints[-1]["distance"]
+    course["elevationGainMeter"] = calculate_elevation_gain(elevations)
+    course["elevationLossMeter"] = calculate_elevation_loss(elevations)
+    course["geoPoints"] = geopoints
+    course["rulePK"] = 2
+    course["sourceTypeId"] = 3
+    course["startPoint"] = pick_start_point(geopoints)
 
 
 def geopoints_to_elevation_tuples(geopoints):
     """
     Convert the list of geopoints to tuples for an elevation data request.
     """
-    return list(
-        [point['latitude'], point['longitude'], None]
-        for point
-        in geopoints
-    )
+    return list([point["latitude"], point["longitude"], None] for point in geopoints)
+
 
 def elevation_tuples_to_geopoints(r):
     """
     Convert a response from the elevation endpoint to a list of geopoints.
     """
     return list(
-        {
-            'distance': None,
-            'elevation': elevation,
-            'latitude': lat,
-            'longitude': lon,
-        }
-        for lat, lon, elevation
-        in r
+        {"distance": None, "elevation": elevation, "latitude": lat, "longitude": lon}
+        for lat, lon, elevation in r
     )
 
 
@@ -55,10 +45,10 @@ def add_distances_to_geopoints(geopoints):
     prev = None
     distance = 0  # meters
     for p in geopoints:
-        cur = p['latitude'], p['longitude']
+        cur = p["latitude"], p["longitude"]
         if prev:
             distance += geopy.distance.distance(prev, cur).m
-        p['distance'] = distance
+        p["distance"] = distance
         prev = cur
 
 
@@ -113,17 +103,19 @@ def calculate_elevation_loss(elevations):
 
 
 def calculate_bounding_box(geopoints):
-    lat_min = min(p['latitude'] for p in geopoints)
-    lat_max = max(p['latitude'] for p in geopoints)
-    lon_min = min(p['longitude'] for p in geopoints)
-    lon_max = max(p['longitude'] for p in geopoints)
+    lat_min = min(p["latitude"] for p in geopoints)
+    lat_max = max(p["latitude"] for p in geopoints)
+    lon_min = min(p["longitude"] for p in geopoints)
+    lon_max = max(p["longitude"] for p in geopoints)
 
-    return {'lowerLeft': {'latitude': lat_min, 'longitude': lon_min},
-            'lowerLeftLatIsSet': True,
-            'lowerLeftLongIsSet': True,
-            'upperRight': {'latitude': lat_max, 'longitude': lon_max},
-            'upperRightLatIsSet': True,
-            'upperRightLongIsSet': True}
+    return {
+        "lowerLeft": {"latitude": lat_min, "longitude": lon_min},
+        "lowerLeftLatIsSet": True,
+        "lowerLeftLongIsSet": True,
+        "upperRight": {"latitude": lat_max, "longitude": lon_max},
+        "upperRightLatIsSet": True,
+        "upperRightLongIsSet": True,
+    }
 
 
 def pick_start_point(geopoints):
@@ -134,8 +126,9 @@ def pick_start_point(geopoints):
     """
     p = geopoints[0]
     return {
-        'distance': p['distance'],
-        'elevation': p['elevation'],
-        'latitude': p['latitude'],
-        'longitude': p['longitude'],
-        'timestamp': None}
+        "distance": p["distance"],
+        "elevation": p["elevation"],
+        "latitude": p["latitude"],
+        "longitude": p["longitude"],
+        "timestamp": None,
+    }

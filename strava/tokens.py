@@ -4,14 +4,14 @@ import config
 
 
 def get_persisted_refresh_token() -> str:
-    with open('persist/strava_refresh_token') as f:
+    with open("persist/strava_refresh_token") as f:
         return f.read()
 
 
 def persist_refresh_token(refresh_token: str) -> None:
-    if re.match('^[a-f0-9]+$', refresh_token) is None:
-        raise ValueError('refresh_token should contain only 0-9 and a-f')
-    with open('persist/strava_refresh_token', 'w') as f:
+    if re.match("^[a-f0-9]+$", refresh_token) is None:
+        raise ValueError("refresh_token should contain only 0-9 and a-f")
+    with open("persist/strava_refresh_token", "w") as f:
         f.write(refresh_token)
 
 
@@ -23,17 +23,17 @@ def request_access_token() -> str:
     """
 
     params = {
-        'client_id': config.strava_client_id,
-        'client_secret': config.strava_client_secret,
-        'grant_type': 'refresh_token',
-        'refresh_token': get_persisted_refresh_token()
+        "client_id": config.strava_client_id,
+        "client_secret": config.strava_client_secret,
+        "grant_type": "refresh_token",
+        "refresh_token": get_persisted_refresh_token(),
     }
 
     # The request may change the refresh token, so first check that we'll be
     # able to persist it.
-    persist_refresh_token(params['refresh_token'])
+    persist_refresh_token(params["refresh_token"])
 
-    response = requests.post('https://www.strava.com/oauth/token', params)
+    response = requests.post("https://www.strava.com/oauth/token", params)
     json = response.json()
 
     # Json should be something like:
@@ -44,8 +44,8 @@ def request_access_token() -> str:
     #    'expires_in': 19837,
     #    'refresh_token': 'abcdef01234567890'
     # }
-    persist_refresh_token(json['refresh_token'])
-    return json['access_token']
+    persist_refresh_token(json["refresh_token"])
+    return json["access_token"]
 
 
 def authorize_with_code(code: str) -> str:
@@ -58,14 +58,14 @@ def authorize_with_code(code: str) -> str:
 
     """
     params = {
-        'client_id': config.strava_client_id,
-        'client_secret': config.strava_client_secret,
-        'grant_type': 'authorization_code',
-        'code': code,
+        "client_id": config.strava_client_id,
+        "client_secret": config.strava_client_secret,
+        "grant_type": "authorization_code",
+        "code": code,
     }
 
-    response = requests.post('https://www.strava.com/oauth/token', params)
+    response = requests.post("https://www.strava.com/oauth/token", params)
     json = response.json()
 
-    persist_refresh_token(json['refresh_token'])
+    persist_refresh_token(json["refresh_token"])
     return json

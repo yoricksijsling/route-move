@@ -8,7 +8,7 @@ import strava.tokens
 
 api_client = swagger_client.ApiClient()
 api_client.configuration.access_token = strava.tokens.request_access_token()
-routes_api = swagger_client.RoutesApi(api_client = api_client)
+routes_api = swagger_client.RoutesApi(api_client=api_client)
 
 # def get_routes():
 #     routes_api
@@ -19,16 +19,21 @@ try:
     # pprint(api_response)
     # print(len(api_response))
 
-    route_id=19295497
+    route_id = 19295497
     api_response = api_client.call_api(
-        f'/routes/{route_id}/export_tcx', 'GET',
-        {}, [], {},
-        body=None, post_params=[], files={},
-        response_type='file',
-        auth_settings=['strava_oauth'],
+        f"/routes/{route_id}/export_tcx",
+        "GET",
+        {},
+        [],
+        {},
+        body=None,
+        post_params=[],
+        files={},
+        response_type="file",
+        auth_settings=["strava_oauth"],
         async_req=None,
         _return_http_data_only=True,
-        _preload_content=False
+        _preload_content=False,
     )
     response_bytes = api_response.data
 

@@ -48,12 +48,16 @@ def require_session(client_function):
     """Decorator that is used to annotate :class:`GarminClient`
     methods that need an authenticated session before being called.
     """
+
     @wraps(client_function)
     def check_session(*args, **kwargs):
         client_object = args[0]
         if not client_object.session:
-            raise Exception("Attempt to use GarminClient without being connected. Call connect() before first use.'")
+            raise Exception(
+                "Attempt to use GarminClient without being connected. Call connect() before first use.'"
+            )
         return client_function(*args, **kwargs)
+
     return check_session
 
 
@@ -104,32 +108,30 @@ class GarminClient(object):
         form_data = {
             "username": self.username,
             "password": self.password,
-            "embed": "false"
+            "embed": "false",
         }
-        request_params = {
-            "service": "https://connect.garmin.com/modern"
-        }
-        headers={'origin': 'https://sso.garmin.com'}
+        request_params = {"service": "https://connect.garmin.com/modern"}
+        headers = {"origin": "https://sso.garmin.com"}
         auth_response = self.session.post(
-            SSO_LOGIN_URL, headers=headers, params=request_params, data=form_data)
+            SSO_LOGIN_URL, headers=headers, params=request_params, data=form_data
+        )
         log.debug("got auth response: %s", auth_response.text)
         if auth_response.status_code != 200:
-            raise ValueError(
-                "authentication failure: did you enter valid credentials?")
-        auth_ticket_url = self._extract_auth_ticket_url(
-            auth_response.text)
+            raise ValueError("authentication failure: did you enter valid credentials?")
+        auth_ticket_url = self._extract_auth_ticket_url(auth_response.text)
         log.debug("auth ticket url: '%s'", auth_ticket_url)
 
         log.info("claiming auth ticket ...")
         response = self.session.get(auth_ticket_url)
         if response.status_code != 200:
             raise RuntimeError(
-                "auth failure: failed to claim auth ticket: %s: %d\n%s" %
-                (auth_ticket_url, response.status_code, response.text))
+                "auth failure: failed to claim auth ticket: %s: %d\n%s"
+                % (auth_ticket_url, response.status_code, response.text)
+            )
 
         # appears like we need to touch base with the old API to initiate
         # some form of legacy session. otherwise certain downloads will fail.
-        self.session.get('https://connect.garmin.com/legacy/session')
+        self.session.get("https://connect.garmin.com/legacy/session")
 
     def _extract_auth_ticket_url(self, auth_response):
         """Extracts an authentication ticket URL from the response of an
@@ -138,32 +140,32 @@ class GarminClient(object):
           https://connect.garmin.com/modern?ticket=ST-0123456-aBCDefgh1iJkLmN5opQ9R-cas
         :param auth_response: HTML response from an auth form submission.
         """
-        match = re.search(
-            r'response_url\s*=\s*"(https:[^"]+)"', auth_response)
+        match = re.search(r'response_url\s*=\s*"(https:[^"]+)"', auth_response)
         if not match:
             raise RuntimeError(
-                "auth failure: unable to extract auth ticket URL. did you provide a correct username/password?")
+                "auth failure: unable to extract auth ticket URL. did you provide a correct username/password?"
+            )
         auth_ticket_url = match.group(1).replace("\\", "")
         return auth_ticket_url
 
     @require_session
     def import_course(self, byte_data):
         data = {}
-        files = {'file': ('my-upload.tcx', byte_data, 'application/octet-stream')}
+        files = {"file": ("my-upload.tcx", byte_data, "application/octet-stream")}
         response = self.session.post(
-            'https://connect.garmin.com/modern/proxy/course-service/course/import',
+            "https://connect.garmin.com/modern/proxy/course-service/course/import",
             data=data,
             files=files,
-            headers={'nk': 'NT'},
+            headers={"nk": "NT"},
         )
         return response
 
     @require_session
     def post_elevation(self, elevation_tuples):
         response = self.session.post(
-            'https://connect.garmin.com/modern/proxy/course-service/course/elevation',
+            "https://connect.garmin.com/modern/proxy/course-service/course/elevation",
             json=elevation_tuples,
-            headers={'nk': 'NT'},
+            headers={"nk": "NT"},
         )
         return response
 
@@ -171,8 +173,8 @@ class GarminClient(object):
     def post_course(self, course):
 
         response = self.session.post(
-            'https://connect.garmin.com/modern/proxy/course-service/course/',
+            "https://connect.garmin.com/modern/proxy/course-service/course/",
             json=course,
-            headers={'nk': 'NT'},
+            headers={"nk": "NT"},
         )
         return response

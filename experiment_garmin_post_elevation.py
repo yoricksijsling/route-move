@@ -8,17 +8,16 @@ import examples.garmin_import_response
 import examples.garmin_elevation_response
 
 course = examples.garmin_import_response.get()
-course['activityTypePk'] = 10
-course['courseName'] = 'hello'
+course["activityTypePk"] = 10
+course["courseName"] = "hello"
 
-elevation_tuples = garmin.course.geopoints_to_elevation_tuples(course['geoPoints'])
+elevation_tuples = garmin.course.geopoints_to_elevation_tuples(course["geoPoints"])
 
 with GarminClient(config.garmin_user, config.garmin_password) as client:
     r = client.post_elevation(elevation_tuples)
     pprint(r)
     pprint(r.text)
     pprint(r.json())
-
 
     # course['geoPoints'] = client.post_elevation(geopoints).json()
 
