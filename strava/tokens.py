@@ -5,7 +5,7 @@ import config
 
 def get_persisted_refresh_token() -> str:
     with open("persist/strava_refresh_token") as f:
-        return f.read()
+        return f.read().strip()
 
 
 def persist_refresh_token(refresh_token: str) -> None:
